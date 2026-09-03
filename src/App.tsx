@@ -14,6 +14,7 @@ import { TransactionFilters } from './components/TransactionFilters';
 import { TransactionTable } from './components/TransactionTable';
 import { ConfirmModal } from './components/ConfirmModal';
 import { ToastContainer, ToastMessage } from './components/Toast';
+import { FlashIntro } from './components/FlashIntro';
 import { Footer } from './components/Footer';
 import { SAMPLE_TRANSACTIONS } from './utils/sampleData';
 import { generateFinancialInsights } from './utils/insights';
@@ -61,6 +62,7 @@ export const App: React.FC = () => {
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null);
   const [isClearAllModalOpen, setIsClearAllModalOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
   // 4. Filtering & Sorting State
   const [filter, setFilter] = useState<FilterState>({
@@ -265,11 +267,15 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+      {/* 3-Second Flash Intro Card */}
+      {showIntro && <FlashIntro onComplete={() => setShowIntro(false)} />}
+
       {/* Header Banner */}
       <Header
         onLoadSampleData={handleLoadSampleData}
         onResetData={handleResetData}
         onExportData={handleExportData}
+        onPlayIntro={() => setShowIntro(true)}
         hasTransactions={transactions.length > 0}
       />
 

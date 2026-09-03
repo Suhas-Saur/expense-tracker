@@ -2,7 +2,7 @@ import React from 'react';
 import { Trash2, Edit2, AlertCircle } from 'lucide-react';
 import { Transaction } from '../types/finance';
 import { formatCurrency, formatDateDisplay } from '../utils/formatters';
-import { getCategoryIcon } from './RecentTransactions';
+import { getCategoryIcon, getCategoryStyle } from './RecentTransactions';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -127,17 +127,11 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
 
                       {/* Category with Icon */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`p-1 rounded-md ${
-                              isIncome
-                                ? 'bg-emerald-50 text-emerald-600'
-                                : 'bg-brand-50 text-brand-600'
-                            }`}
-                          >
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-xs font-bold shadow-2xs">
+                          <span className={`p-1 rounded-lg ${getCategoryStyle(t.category).iconBg}`}>
                             {getCategoryIcon(t.category)}
                           </span>
-                          <span className="font-semibold text-xs text-gray-800">
+                          <span className="text-gray-800">
                             {t.category}
                           </span>
                         </div>

@@ -5,6 +5,7 @@ interface HeaderProps {
   onLoadSampleData: () => void;
   onResetData: () => void;
   onExportData: () => void;
+  onPlayIntro: () => void;
   hasTransactions: boolean;
 }
 
@@ -12,6 +13,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLoadSampleData,
   onResetData,
   onExportData,
+  onPlayIntro,
   hasTransactions,
 }) => {
   return (
@@ -32,12 +34,22 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Quick Actions for Evaluation & Ease of Use */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
         <button
+          onClick={onPlayIntro}
+          type="button"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-amber-400/30 to-orange-400/30 hover:from-amber-400/40 hover:to-orange-400/40 text-amber-100 hover:text-white rounded-full border border-amber-300/40 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
+          title="Play 3-second flash card intro"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <span>Flash Intro (3s)</span>
+        </button>
+
+        <button
           onClick={onLoadSampleData}
           type="button"
           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium bg-white/15 hover:bg-white/25 text-white rounded-full border border-white/30 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 shadow-sm"
           title="Load pre-filled sample student transactions to preview charts and calculations"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <Sparkles className="w-3.5 h-3.5 text-indigo-200" />
           <span>Load Sample Data</span>
         </button>
 

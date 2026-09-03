@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PieChart, BarChart3, TrendingUp, CalendarDays } from 'lucide-react';
+import { PieChart, BarChart3, TrendingUp, CalendarDays, Sparkles } from 'lucide-react';
 import { Transaction } from '../types/finance';
 import { formatCurrency, formatDateDisplay } from '../utils/formatters';
 
@@ -9,17 +9,17 @@ interface AnalyticsSectionProps {
 
 const CATEGORY_COLORS: Record<string, string> = {
   Food: '#10b981', // emerald
-  Travel: '#f59e0b', // amber/orange
+  Travel: '#f59e0b', // amber
   Books: '#6366f1', // purple/indigo
-  Entertainment: '#818cf8', // lavender/blue
+  Entertainment: '#ec4899', // hot pink
   Education: '#06b6d4', // cyan
-  Shopping: '#ec4899', // pink
-  Rent: '#8b5cf6', // violet
+  Shopping: '#8b5cf6', // violet
+  Rent: '#3b82f6', // blue
   Bills: '#64748b', // slate
-  'Mobile/Internet': '#0284c7', // sky
-  Healthcare: '#ef4444', // red
+  'Mobile/Internet': '#0ea5e9', // sky
+  Healthcare: '#ef4444', // coral red
   Subscriptions: '#d946ef', // fuchsia
-  Other: '#94a3b8', // gray
+  Other: '#94a3b8', // cool gray
 };
 
 const DEFAULT_COLOR = '#6366f1';
@@ -47,7 +47,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
     }))
     .sort((a, b) => b.amount - a.amount);
 
-  // 2. Daily Expenses Data (Chronological)
+  // 2. Daily Expenses Data
   const dailyMap: Record<string, number> = {};
   expenses.forEach((e) => {
     dailyMap[e.date] = (dailyMap[e.date] || 0) + e.amount;
@@ -60,16 +60,14 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
     amount: dailyMap[date],
   }));
 
-  // Max daily amount for scaling
   const maxDailyExpense = dailyData.length > 0 ? Math.max(...dailyData.map((d) => d.amount)) : 100;
-  // Nice round Y-axis ceiling
   const yAxisCeiling = Math.max(100, Math.ceil(maxDailyExpense / 100) * 100);
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round(yAxisCeiling * ratio));
 
   // 3. Monthly Overview Data
   const monthMap: Record<string, { income: number; expense: number }> = {};
   transactions.forEach((t) => {
-    const monthKey = t.date.substring(0, 7); // YYYY-MM
+    const monthKey = t.date.substring(0, 7);
     if (!monthMap[monthKey]) {
       monthMap[monthKey] = { income: 0, expense: 0 };
     }
@@ -98,14 +96,14 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
     if (categoryData.length === 0) return null;
 
     let cumulativeAngle = 0;
-    const size = 200;
-    const strokeWidth = 36;
+    const size = 210;
+    const strokeWidth = 38;
     const radius = (size - strokeWidth) / 2;
     const center = size / 2;
     const circumference = 2 * Math.PI * radius;
 
     return (
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg]">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg] filter drop-shadow-md">
         {categoryData.map((item) => {
           const strokeDasharray = `${(item.percentage / 100) * circumference} ${circumference}`;
           const strokeDashoffset = -((cumulativeAngle / 100) * circumference);
@@ -122,7 +120,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
               strokeWidth={strokeWidth}
               strokeDasharray={strokeDasharray}
               strokeDashoffset={strokeDashoffset}
-              className="transition-all duration-300 hover:opacity-85 cursor-pointer"
+              className="transition-all duration-300 hover:opacity-85 hover:stroke-[42px] cursor-pointer"
             >
               <title>{`${item.category}: ${formatCurrency(item.amount)} (${Math.round(
                 item.percentage
@@ -136,24 +134,27 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
 
   return (
     <div className="mb-10">
-      {/* Section Header with Subtle Accent Line */}
+      {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-6 border-b border-gray-200">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-extrabold text-gray-900 flex items-center gap-2">
+            <span className="p-1 rounded-lg bg-indigo-100 text-indigo-700">
+              <Sparkles className="w-4 h-4" />
+            </span>
             <span>Expense & Income Analytics</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Visual breakdown of spending patterns and timeline trends
+            Interactive visual charts comparing categorical share and temporal patterns
           </p>
         </div>
 
-        {/* View Switcher for the right panel */}
-        <div className="mt-3 sm:mt-0 inline-flex bg-gray-100 p-1 rounded-xl border border-gray-200 text-xs font-semibold self-start sm:self-auto">
+        {/* View Switcher Tabs */}
+        <div className="mt-3 sm:mt-0 inline-flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs font-bold self-start sm:self-auto shadow-inner">
           <button
             onClick={() => setActiveTab('daily')}
-            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'daily'
-                ? 'bg-white text-brand-700 shadow-xs'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -162,9 +163,9 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
           </button>
           <button
             onClick={() => setActiveTab('compare')}
-            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'compare'
-                ? 'bg-white text-brand-700 shadow-xs'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -173,9 +174,9 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
           </button>
           <button
             onClick={() => setActiveTab('monthly')}
-            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'monthly'
-                ? 'bg-white text-brand-700 shadow-xs'
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -185,18 +186,18 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
         </div>
       </div>
 
-      {/* 2-Column Analytics Grid Matching Reference Screenshots */}
+      {/* 2-Column Analytics Grid Matching Screenshots */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Card 1: Category Breakdown Donut Chart */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs min-h-[340px]">
+        <div className="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-xs min-h-[350px]">
           <div className="text-center">
-            <h3 className="text-sm sm:text-base font-bold text-gray-800 flex items-center justify-center gap-1.5">
-              <PieChart className="w-4 h-4 text-brand-600" />
+            <h3 className="text-sm sm:text-base font-extrabold text-gray-800 flex items-center justify-center gap-2">
+              <PieChart className="w-4 h-4 text-indigo-600" />
               <span>Category Breakdown</span>
             </h3>
           </div>
 
-          {/* Chart or Exact Screenshot Empty State */}
+          {/* Chart Graphic or Authentic Screenshot Empty State */}
           <div className="flex-1 flex flex-col items-center justify-center my-4">
             {expenses.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-center p-6 text-gray-400">
@@ -208,12 +209,12 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                 </p>
               </div>
             ) : (
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center py-2">
                 {renderDonutSegments()}
                 {/* Center Label */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-xs text-gray-500 font-medium">Expenses</span>
-                  <span className="text-sm font-extrabold text-gray-800">
+                  <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Spent</span>
+                  <span className="text-base font-black text-slate-900">
                     {formatCurrency(totalExpenseAmount, false)}
                   </span>
                 </div>
@@ -221,17 +222,20 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
             )}
           </div>
 
-          {/* Legend Matching Reference Screenshot */}
+          {/* Graphical Color-Pill Legend */}
           {expenses.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-3 border-t border-slate-200/60 text-xs">
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-3 border-t border-slate-100 text-xs">
               {categoryData.slice(0, 6).map((item) => (
-                <div key={item.category} className="flex items-center gap-1.5">
+                <div
+                  key={item.category}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-200/60 shadow-2xs hover:bg-white transition-colors"
+                >
                   <span
-                    className="w-3 h-2 rounded-xs"
+                    className="w-2.5 h-2.5 rounded-full shadow-2xs"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-gray-700 font-medium">{item.category}</span>
-                  <span className="text-gray-400 text-[11px]">
+                  <span className="text-gray-800 font-bold text-[11px]">{item.category}</span>
+                  <span className="text-slate-500 font-semibold text-[10px]">
                     {Math.round(item.percentage)}%
                   </span>
                 </div>
@@ -240,20 +244,20 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
           )}
         </div>
 
-        {/* Card 2: Trend & Timeline Chart (Daily / Income vs Expense / Monthly) */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs min-h-[340px]">
+        {/* Card 2: Timeline & Trend Charts */}
+        <div className="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-xs min-h-[350px]">
           <div className="text-center">
-            <h3 className="text-sm sm:text-base font-bold text-gray-800">
-              {activeTab === 'daily' && 'Daily Expenses'}
-              {activeTab === 'compare' && 'Income vs Expenses'}
-              {activeTab === 'monthly' && 'Monthly Overview'}
+            <h3 className="text-sm sm:text-base font-extrabold text-gray-800">
+              {activeTab === 'daily' && 'Daily Expenses Trend'}
+              {activeTab === 'compare' && 'Inflow vs Outflow Comparison'}
+              {activeTab === 'monthly' && 'Monthly Financial Overview'}
             </h3>
           </div>
 
           {/* Chart Content */}
           <div className="flex-1 flex flex-col justify-center my-2">
             {expenses.length === 0 && incomes.length === 0 ? (
-              /* Exact Screenshot Empty State: Y Axis with ₹ ticks and italic message */
+              /* Exact Screenshot 1 Empty State */
               <div className="w-full h-56 flex flex-col justify-between py-2 px-4 relative">
                 <div className="w-full flex-1 flex flex-col justify-between border-l border-b border-slate-200 pl-2">
                   {['₹1', '₹0.9', '₹0.8', '₹0.7', '₹0.6', '₹0.5', '₹0.4', '₹0.3', '₹0.2', '₹0.1', '₹0'].map(
@@ -272,37 +276,34 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                 </div>
               </div>
             ) : activeTab === 'daily' ? (
-              /* Daily Expenses Bar Chart */
+              /* Daily Expenses Graphical Bar Chart */
               dailyData.length === 0 ? (
                 <p className="text-xs text-center text-gray-400 py-12">
                   No expense records available for daily trend.
                 </p>
               ) : (
                 <div className="w-full h-56 flex flex-col justify-end pt-4 pb-1">
-                  {/* Grid Lines & Bars */}
-                  <div className="flex-1 flex items-end justify-around gap-2 px-3 border-b border-slate-200 relative">
-                    {/* Horizontal Guide Lines */}
+                  {/* Grid Lines & Glowing Gradient Bars */}
+                  <div className="flex-1 flex items-end justify-around gap-2.5 px-3 border-b border-slate-200 relative">
                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-40">
                       {yTicks.slice().reverse().map((t) => (
                         <div key={t} className="border-b border-dashed border-slate-300 w-full" />
                       ))}
                     </div>
 
-                    {/* Bars */}
                     {dailyData.slice(-7).map((d) => {
                       const heightPercent =
-                        yAxisCeiling > 0 ? Math.max(8, (d.amount / yAxisCeiling) * 100) : 10;
+                        yAxisCeiling > 0 ? Math.max(10, (d.amount / yAxisCeiling) * 100) : 10;
                       return (
                         <div
                           key={d.date}
-                          className="flex-1 max-w-[48px] flex flex-col items-center h-full justify-end group z-10"
+                          className="flex-1 max-w-[46px] flex flex-col items-center h-full justify-end group z-10"
                         >
-                          {/* Hover Tooltip */}
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-[11px] rounded-md px-2 py-1 absolute -top-8 pointer-events-none whitespace-nowrap shadow-lg">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[11px] font-bold rounded-lg px-2.5 py-1 absolute -top-8 pointer-events-none whitespace-nowrap shadow-xl border border-white/20">
                             {formatCurrency(d.amount)}
                           </div>
                           <div
-                            className="w-full bg-[#5e6cf5] rounded-t-lg hover:bg-brand-700 transition-all duration-300 shadow-xs cursor-pointer"
+                            className="w-full bg-gradient-to-t from-[#4f46e5] via-[#5e6cf5] to-[#818cf8] rounded-t-xl hover:opacity-90 transition-all duration-300 shadow-md shadow-indigo-500/20 cursor-pointer"
                             style={{ height: `${heightPercent}%` }}
                           />
                         </div>
@@ -310,8 +311,8 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                     })}
                   </div>
 
-                  {/* X Axis Labels */}
-                  <div className="flex justify-around px-3 pt-2 text-[11px] font-medium text-gray-500">
+                  {/* X Axis */}
+                  <div className="flex justify-around px-3 pt-2 text-[11px] font-bold text-gray-600">
                     {dailyData.slice(-7).map((d) => (
                       <span key={d.date} className="truncate max-w-[54px] text-center">
                         {d.formattedDate.replace(/ \d{4}$/, '')}
@@ -321,21 +322,22 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                 </div>
               )
             ) : activeTab === 'compare' ? (
-              /* Income vs Expenses Bar Comparison */
-              <div className="w-full h-56 flex flex-col justify-center px-4">
+              /* Income vs Expenses Comparison */
+              <div className="w-full h-56 flex flex-col justify-center px-3 sm:px-4">
                 <div className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-xs font-semibold mb-1">
-                      <span className="text-emerald-700">Income Inflow</span>
-                      <span className="text-emerald-700">
-                        {formatCurrency(
-                          incomes.reduce((acc, i) => acc + i.amount, 0)
-                        )}
+                    <div className="flex justify-between text-xs font-bold mb-1.5">
+                      <span className="text-emerald-700 uppercase tracking-wider flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                        Income Inflow
+                      </span>
+                      <span className="text-emerald-700 font-extrabold">
+                        {formatCurrency(incomes.reduce((acc, i) => acc + i.amount, 0))}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 h-4 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-0.5 border border-emerald-200">
                       <div
-                        className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-700 shadow-xs"
                         style={{
                           width: `${
                             incomes.length + expenses.length > 0
@@ -354,15 +356,18 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs font-semibold mb-1">
-                      <span className="text-rose-700">Expense Outflow</span>
-                      <span className="text-rose-700">
+                    <div className="flex justify-between text-xs font-bold mb-1.5">
+                      <span className="text-rose-700 uppercase tracking-wider flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-rose-500" />
+                        Expense Outflow
+                      </span>
+                      <span className="text-rose-700 font-extrabold">
                         {formatCurrency(totalExpenseAmount)}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 h-4 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-0.5 border border-rose-200">
                       <div
-                        className="bg-rose-500 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-rose-400 to-red-500 h-full rounded-full transition-all duration-700 shadow-xs"
                         style={{
                           width: `${
                             incomes.length + expenses.length > 0
@@ -380,13 +385,13 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-gray-600 flex justify-between">
-                    <span>Net Financial Margin:</span>
+                  <div className="p-3 bg-gradient-to-r from-slate-50 to-indigo-50/50 rounded-2xl border border-indigo-100 text-xs text-gray-700 flex justify-between items-center">
+                    <span className="font-bold">Net Financial Reserve:</span>
                     <span
-                      className={`font-bold ${
+                      className={`font-black text-sm px-2.5 py-0.5 rounded-full ${
                         incomes.reduce((acc, i) => acc + i.amount, 0) - totalExpenseAmount >= 0
-                          ? 'text-emerald-600'
-                          : 'text-rose-600'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-rose-100 text-rose-800'
                       }`}
                     >
                       {formatCurrency(
@@ -415,30 +420,30 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ transactions
                           <div className="flex items-end gap-1.5 h-full w-full justify-center">
                             <div
                               title={`Income: ${formatCurrency(m.income)}`}
-                              className="w-3.5 sm:w-4 bg-emerald-500 rounded-t-sm hover:opacity-85 transition-all"
-                              style={{ height: `${Math.max(4, incHeight)}%` }}
+                              className="w-3.5 sm:w-4 bg-gradient-to-t from-emerald-600 to-teal-400 rounded-t-md hover:opacity-85 transition-all shadow-xs"
+                              style={{ height: `${Math.max(6, incHeight)}%` }}
                             />
                             <div
                               title={`Expense: ${formatCurrency(m.expense)}`}
-                              className="w-3.5 sm:w-4 bg-rose-500 rounded-t-sm hover:opacity-85 transition-all"
-                              style={{ height: `${Math.max(4, expHeight)}%` }}
+                              className="w-3.5 sm:w-4 bg-gradient-to-t from-rose-600 to-pink-400 rounded-t-md hover:opacity-85 transition-all shadow-xs"
+                              style={{ height: `${Math.max(6, expHeight)}%` }}
                             />
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="flex justify-around px-3 pt-2 text-[11px] font-medium text-gray-500">
+                  <div className="flex justify-around px-3 pt-2 text-[11px] font-bold text-gray-600">
                     {monthlyData.slice(-6).map((m) => (
                       <span key={m.month}>{m.label}</span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-center gap-4 mt-2 text-[11px] text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500" /> Income
+                  <div className="flex items-center justify-center gap-4 mt-2 text-[11px] font-semibold text-gray-600">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Income
                     </span>
-                    <span className="flex items-center gap-1">
-                      <span className="w-2.5 h-2.5 rounded-xs bg-rose-500" /> Expense
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> Expense
                     </span>
                   </div>
                 </div>
