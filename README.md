@@ -2,6 +2,16 @@
 
 > A modern, student-focused personal finance dashboard to track income, expenses, and budget effortlessly. Designed with high visual fidelity, rich charts, data-driven financial insights, responsive layouts, and permanent browser persistence.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://suhas-saur.github.io/expense-tracker/)
+[![GitHub Repository](https://img.shields.io/badge/Repository-Suhas--Saur%2Fexpense--tracker-blue?style=for-the-badge&logo=github)](https://github.com/Suhas-Saur/expense-tracker)
+
+---
+
+## 🔗 Live Demo Links
+
+- **Permanent Production Live Demo**: [https://suhas-saur.github.io/expense-tracker/](https://suhas-saur.github.io/expense-tracker/)
+- **GitHub Source of Truth**: [https://github.com/Suhas-Saur/expense-tracker](https://github.com/Suhas-Saur/expense-tracker)
+
 ---
 
 ## 🌟 Overview & UI Design
@@ -95,8 +105,11 @@ npm run dev
 # http://localhost:3000
 ```
 
-### Production Build
+### Production Build & Test
 ```bash
+# Run automated verification suite (19/19 checks)
+npm test
+
 # Build optimized static bundle
 npm run build
 
@@ -115,38 +128,41 @@ To give this project (and all your future repositories) a **permanent, independe
 
 ---
 
+### Push to GitHub
+```powershell
+git add .
+git commit -m "docs: update README with repository and live demo links"
+git branch -M main
+git push -u origin main
+```
+
+---
+
 ### Option 1: GitHub Pages (100% Free, Automated via GitHub Actions)
 This repository already includes `.github/workflows/deploy.yml` and `base: './'` in `vite.config.ts`.
 
 #### Steps:
-1. Push your repository to GitHub:
-   ```bash
-   git add .
-   git commit -m "feat: complete student finance tracker"
-   git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPO>.git
-   git push -u origin main
+1. In your GitHub repository: [https://github.com/Suhas-Saur/expense-tracker](https://github.com/Suhas-Saur/expense-tracker)
+2. Go to **Settings** > **Pages**
+3. Under **Build and deployment** > **Source**, select **GitHub Actions**
+4. That's it! GitHub Actions will automatically run `npm run build` and publish your site at:
    ```
-2. In your GitHub repository:
-   - Go to **Settings** > **Pages**
-   - Under **Build and deployment** > **Source**, select **GitHub Actions**
-3. That's it! GitHub Actions will automatically run `npm run build` and publish your site at:
+   https://suhas-saur.github.io/expense-tracker/
    ```
-   https://<YOUR_USERNAME>.github.io/<YOUR_REPO>/
-   ```
-4. **Permanent**: This live demo runs completely independent of Antigravity and will never shut down.
+5. **Permanent**: This live demo runs completely independent of Antigravity and will never shut down.
 
 ---
 
-### Option 2: Vercel (Recommended for Instant Deployments)
+### Option 2: Vercel (Instant 1-Click Deployment)
 This repository includes `vercel.json` configured for SPA routing.
 
 #### Steps:
 1. Go to [vercel.com](https://vercel.com) and log in with GitHub.
 2. Click **"Add New..."** > **"Project"**.
-3. Select your repository `expense-tracker` and click **Deploy**.
+3. Select your repository `Suhas-Saur/expense-tracker` and click **Deploy**.
 4. Vercel automatically detects Vite, runs `npm run build`, and assigns a permanent URL:
    ```
-   https://expense-tracker-<your-team>.vercel.app
+   https://expense-tracker-suhas-saur.vercel.app
    ```
 5. Every future `git push` to `main` will automatically build and update the live demo.
 
@@ -157,7 +173,7 @@ This repository includes `vercel.json` configured for SPA routing.
 
 | Project Type | Recommended Hosting | Configuration File | Resulting URL |
 | :--- | :--- | :--- | :--- |
-| **Frontend Only / Static (Vite, React, Vue, Next export)** | GitHub Pages or Vercel | `.github/workflows/deploy.yml` or `vercel.json` | `https://<repo>.vercel.app` or `https://<user>.github.io/<repo>` |
+| **Frontend Only / Static (Vite, React, Vue, Next export)** | GitHub Pages or Vercel | `.github/workflows/deploy.yml` or `vercel.json` | `https://suhas-saur.github.io/<repo>/` or `https://<repo>.vercel.app` |
 | **Full Stack (Node + Express / FastAPI + React)** | Vercel (Frontend) + Render / Railway (Backend) | `render.yaml` or `Dockerfile` | Frontend: `https://app.vercel.app`<br>API: `https://api.onrender.com` |
 
 ---
@@ -166,7 +182,7 @@ This repository includes `vercel.json` configured for SPA routing.
 
 - **LOCAL**: `http://localhost:3000` (Running directly on your machine during development)
 - **DEVELOPMENT**: Temporary preview URLs generated while an active Antigravity session is running
-- **PRODUCTION**: Permanent live cloud URL (e.g., `https://<username>.github.io/<repo>/` or `https://<repo>.vercel.app`) that stays active 24/7/365
+- **PRODUCTION**: Permanent live cloud URL ([https://suhas-saur.github.io/expense-tracker/](https://suhas-saur.github.io/expense-tracker/)) that stays active 24/7/365
 
 ---
 
